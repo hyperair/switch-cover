@@ -64,6 +64,9 @@ module strip_grip_piece ()
 {
     rotate (-90, Y)
     linear_extrude (height = cover_length, center = true)
+
+    offset (r = -1)
+    offset (r = 1)
     union () {
         intersection () {
             offset (r = -5)
