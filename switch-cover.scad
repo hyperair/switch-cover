@@ -5,7 +5,7 @@ use <MCAD/shapes/2Dshapes.scad>
 include <MCAD/units/metric.scad>
 
 switch_dimensions = [10, 22, 8];
-min_wall_thickness = 3;
+min_wall_thickness = 2;
 strip_width = 65;
 strip_depth = 19;
 
