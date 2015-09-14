@@ -4,7 +4,7 @@ use <MCAD/shapes/boxes.scad>
 use <MCAD/shapes/2Dshapes.scad>
 include <MCAD/units/metric.scad>
 
-switch_dimensions = [10, 40, 10];
+switch_dimensions = [10, 22, 8];
 min_wall_thickness = 3;
 strip_width = 65;
 strip_depth = 19;
@@ -17,6 +17,7 @@ foot_thickness = min_wall_thickness;
 foot_length = foot_thickness + 1;
 cover_base = foot_thickness + strip_depth;
 cover_surface = cover_base + min_wall_thickness;
+switch_tilt = atan (switch_dimensions[2] / switch_dimensions[1]);
 
 
 $fs = 0.4;
@@ -24,18 +25,26 @@ $fa = 1;
 
 module switch_cover_basic_shape ()
 {
-    fillet (r = 5, steps = 10) {
+    // union () {
+    fillet (r = 3, steps = 10) {
         strip_grip_piece ();
 
-        place_switch ()
-        switch_housing ();
+        difference () {
+            place_switch ()
+            switch_housing ();
+
+            translate ([0, 0, cover_base])
+            mirror (Z)
+            ccube (switch_dimensions + [1.5, 1.5, 0] * min_wall_thickness,
+                center = X + Y);
+        }
     }
 }
 
 module switch_hole ()
 {
-    translate ([0, 0, -epsilon])
-    ccube (switch_dimensions, center = X + Y);
+    translate ([0, 0, -2])
+    ccube (switch_dimensions + [0, 0, 2], center = X + Y);
 }
 
 module switch_housing ()
@@ -77,7 +86,7 @@ module strip_grip_piece ()
 
         // feet
         mcad_mirror_duplicate (Y)
-        translate ([0, strip_width / 2 - foot_length])
+        translate ([0, cover_width / 2 - foot_length])
         square ([min_wall_thickness, foot_length]);
     }
 }
@@ -85,6 +94,9 @@ module strip_grip_piece ()
 module place_switch ()
 {
     translate ([0, 0, cover_base])
+    translate ([0, -switch_dimensions[1] / 2])
+    rotate (switch_tilt, X)
+    translate ([0, switch_dimensions[1] / 2, -switch_dimensions[2]])
     children ();
 }
 
